@@ -1,16 +1,56 @@
-# @zhafron/opencode-memory-md
+# @tleclaire/opencode-memory-md
 
-Simple markdown-based memory plugin for OpenCode.
+Markdown-based memory plugin for OpenCode — **fork** of
+[@zhafron/opencode-memory-md](https://github.com/tickernelz/opencode-memory-md)
+(upstream) adding an **OpenCode v2 plugin entrypoint**. The v2 half was written
+against `@opencode/plugin` 2.0.9; the same build still runs unchanged on
+OpenCode v1.
 
 ## Installation
 
-Add to your OpenCode configuration at `~/.config/opencode/opencode.json`:
+Add to your OpenCode configuration at `~/.config/opencode/opencode.json`.
+
+Upstream package, v1 only:
 
 ```json
 {
   "plugin": ["@zhafron/opencode-memory-md"]
 }
 ```
+
+This fork from a local checkout (runs on v1 today, on v2 once OpenCode 2.x is in
+use). Build it first with `bun install && bun run build`:
+
+```json
+{
+  "plugin": ["/absolute/path/to/opencode-memory-md/dist/index.js"]
+}
+```
+
+## OpenCode v2 entrypoint
+
+`dist/index.js` carries both entrypoints in its default export:
+
+```js
+export default { ...V2Plugin, ...v1Module }; // { id, setup, server }
+```
+
+OpenCode 1.18.29+ calls `server()` (v1 hooks); OpenCode 2.x calls `setup(ctx)`
+(v2 domains). Both build the same runtime from `src/memoryTool.ts`, so the tool,
+its handlers and the memory files behave identically on either version.
+
+Hook mapping in `src/v2.ts`:
+
+| v1 | v2 |
+|----|----|
+| `tool` map + `tool()` helper | `ctx.tool.transform(editor => editor.add(...))` |
+| `tool.execute.after` | `ctx.tool.hook("execute.after", ...)` |
+| `experimental.chat.system.transform` | `ctx.session.hook("context", ...)` |
+| `event` hook | `ctx.event.subscribe({ signal })` |
+| `ctx.client.tui.showToast` | no equivalent in the v2 plugin context (logged to stderr) |
+
+The v2 module is imported **type-only** so the v2 runtime never loads in a v1
+process; `@opencode/plugin` is a devDependency for that reason.
 
 ## Memory Files
 

@@ -1,7 +1,7 @@
 {
-  "name": "@zhafron/opencode-memory-md",
-  "version": "1.2.0",
-  "description": "Simple markdown-based memory plugin for OpenCode",
+  "name": "@tleclaire/opencode-memory-md",
+  "version": "2.0.0",
+  "description": "Markdown-based memory plugin for OpenCode — fork of @zhafron/opencode-memory-md with an OpenCode v2 plugin entrypoint",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -23,20 +23,21 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/zhafron/opencode-memory-md.git"
+    "url": "https://github.com/tleclaire/opencode-memory-md.git"
   },
   "publishConfig": {
     "access": "public"
   },
   "dependencies": {
     "@huggingface/transformers": "4.0.0-next.4",
-    "@opencode-ai/plugin": "^1.2.6",
+    "@opencode-ai/plugin": "^1.18.30",
     "vectra": "^0.12.3"
   },
   "overrides": {
     "onnxruntime-node": "1.23.2"
   },
   "devDependencies": {
+    "@opencode/plugin": "^2.0.9",
     "@types/bun": "^1.3.8",
     "@types/node": "^22.19.11",
     "husky": "^9.1.7",

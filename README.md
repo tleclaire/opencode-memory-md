@@ -12,6 +12,34 @@ Add to your OpenCode configuration at `~/.config/opencode/opencode.json`:
 }
 ```
 
+## OpenCode v2
+
+OpenCode v2 (`2.0.x`) replaces the v1 plugin API, so the default export carries
+both entrypoints:
+
+- **v1** (OpenCode >= 1.18.29) calls `server()` — the existing hooks, unchanged.
+- **v2** calls `setup()` from `@opencode/plugin`: the `memory` tool is
+  registered through `ctx.tool.transform()`, the context injection through
+  `ctx.session.hook("context")`, and the daily-log reminder through
+  `ctx.tool.hook("execute.after")`.
+
+```ts
+// src/index.ts
+export default { ...V2Plugin, ...{ id: "memory-md", server: MemoryPlugin } };
+```
+
+The install line is the same for both versions. OpenCode older than 1.18.29 does
+not understand the object entrypoint — use a release from before the v2
+entrypoint landed there.
+
+| v1 hook | v2 equivalent |
+|---------|---------------|
+| `tool: { memory: tool({ ... }) }` | `ctx.tool.transform(e => e.add({ name, description, input, execute }))` |
+| `"tool.execute.after"` | `ctx.tool.hook("execute.after", ...)` |
+| `"experimental.chat.system.transform"` | `ctx.session.hook("context", ...)` |
+| `event` | `ctx.event.subscribe(...)` |
+| `ctx.client.tui.showToast` | not part of the plugin context in v2 (the tui is a separate package) — falls back to the log |
+
 ## Memory Files
 
 | File | Purpose |
